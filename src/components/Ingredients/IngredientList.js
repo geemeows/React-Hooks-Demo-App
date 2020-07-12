@@ -18,4 +18,4 @@ const IngredientList = props => {
   );
 };
 
-export default IngredientList;
+export default React.memo(IngredientList);

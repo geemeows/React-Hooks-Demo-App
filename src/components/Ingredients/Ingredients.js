@@ -1,4 +1,4 @@
-import React, { useReducer, useEffect, useCallback } from 'react';
+import React, { useReducer, useCallback } from 'react';
 import consumeAPI from '../../fetch'
 
 import IngredientForm from './IngredientForm';
@@ -39,15 +39,12 @@ const Ingredients = () => {
   const [ingredients, dispatch] = useReducer(ingredientsReducer, [])
   const [{ isLoading, error}, dispatchHttp] = useReducer(httpReducer, { isLoading: false, error: null })
 
-  useEffect(() => {
-    console.log('RERENDERED', ingredients)
-  }, [ingredients])
 
   const filterIngredients = useCallback(filteredIngredients => {
     dispatch({ type: 'SET', payload: filteredIngredients })
   }, [])
 
-  const addIngredient = async (ingredient) => {
+  const addIngredient = useCallback(async (ingredient) => {
     try {
       dispatchHttp({ type: 'SEND' })
       const response = await serverHttp.post('/ingredients.json', ingredient)
@@ -64,9 +61,9 @@ const Ingredients = () => {
       
     }
 
-  }
+  }, [])
 
-  const removeIngredient = async (id) => {
+  const removeIngredient = useCallback(async (id) => {
     try {
       dispatchHttp({ type: 'SEND' })
       await serverHttp.delete(`/ingredients/${id}.json`)
@@ -76,11 +73,15 @@ const Ingredients = () => {
     } catch (err) {
       dispatchHttp({ type: 'ERROR', payload: 'Something went wrong!' })
     }
-  }
+  }, [])
+
+  const closeModal = useCallback(() => {
+    dispatchHttp({ type: 'CLEAR'})
+  }, [])
 
   return (
     <div className="App">
-      { error && <ErrorModal onClose={() => { dispatchHttp({ type: 'CLEAR'}) }}>{error}</ErrorModal>}
+      { error && <ErrorModal onClose={closeModal}>{error}</ErrorModal>}
       <IngredientForm addIngredient={addIngredient} loading={isLoading} />
 
       <section>
