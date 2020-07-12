@@ -38,12 +38,6 @@ const Search = ({ filter }) => {
     }
  }, [title, filter])
 
-
-  // useEffect(() => {
-  //   console.log('called')
-  //   filter(title)
-  // }, [title, filter])
-
   return (
     <section className="search">
       <Card>

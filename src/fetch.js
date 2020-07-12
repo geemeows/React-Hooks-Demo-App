@@ -23,4 +23,14 @@ export default class ConsumeAPI {
             endpoint = `/${route}`
         return fetch(`${this.baseURL}${endpoint}`)
     }
+    delete = (route) => {
+        let endpoint 
+        if (route.startsWith('/'))
+            endpoint = route
+        else 
+            endpoint = `/${route}`
+        return fetch(`${this.baseURL}${endpoint}`, {
+            method: 'DELETE'
+        })
+    }
 }
