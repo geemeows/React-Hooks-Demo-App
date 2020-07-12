@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import consumeAPI from '../../fetch'
 
 import IngredientForm from './IngredientForm';
@@ -10,16 +10,18 @@ const serverHttp = new consumeAPI('https://burger-builder-5404b.firebaseio.com')
 const Ingredients = () => {
   const [ingredients, setIngredients] = useState([])
 
-  const addIngredient = async (ingredient) => {
-    // let options = {
-    //   method: 'POST',
-    //   headers: { 'Content-Type': 'application/json' },
-    //   body: JSON.stringify(ingredient)
-    // }
+  useEffect(() => {
+    console.log('RERENDERED', ingredients)
+  }, [ingredients])
 
+  const filterIngredients = useCallback(filteredIngredients => {
+    setIngredients(filteredIngredients)
+  }, [])
+
+  const addIngredient = async (ingredient) => {
     try {
       const response = await serverHttp.post('/ingredients.json', ingredient)
-      let parsedRes = await response.json()
+      const parsedRes = await response.json()
       const newIngredient = {
         id: parsedRes.name,
         ...ingredient
@@ -37,7 +39,7 @@ const Ingredients = () => {
       <IngredientForm addIngredient={addIngredient}/>
 
       <section>
-        <Search />
+        <Search filter={filterIngredients}/>
         <IngredientsList ingredients={ingredients} onRemoveItem={() => {}} />
       </section>
     </div>
